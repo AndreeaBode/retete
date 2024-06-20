@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import joblib
+from sklearn.ensemble import RandomForestClassifier
 
 app = Flask(__name__)
 
