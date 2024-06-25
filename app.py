@@ -20,7 +20,6 @@ def home():
 
 # Define a route for predictions
 @app.route('/predict', methods=['POST'])
-@cross_origin(origin='*')
 def predict():
     try:
         # Assume data is sent as JSON
