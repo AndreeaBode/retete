@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify
 import joblib
-from flask_cors import CORS
-from flask_cors import CORS, cross_origin
 import os
 
 app = Flask(__name__)
