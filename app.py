@@ -4,12 +4,17 @@ import os
 
 app = Flask(__name__)
 
-# Load the model
-model_path = 'mlb.pkl'
-if os.path.exists(model_path):
-    model = joblib.load(model_path)
+# Load the classifier, MultiLabelBinarizer, and vectorizer
+classifier_path = 'classifier_model.pkl'
+mlb_path = 'mlb.pkl'
+vectorizer_path = 'vectorizer.pkl'
+
+if os.path.exists(classifier_path) and os.path.exists(mlb_path) and os.path.exists(vectorizer_path):
+    classifier = joblib.load(classifier_path)
+    mlb = joblib.load(mlb_path)
+    vectorizer = joblib.load(vectorizer_path)
 else:
-    raise FileNotFoundError(f"Model file {model_path} not found.")
+    raise FileNotFoundError(f"Model files not found.")
 
 # Define a route for the root URL
 @app.route('/')
@@ -21,17 +26,23 @@ def home():
 def predict():
     try:
         # Assume data is sent as JSON
-        data = request.json  
+        data = request.json
         
-        # Check if data is a dict or a list
-        if not isinstance(data, (list, dict)):
-            raise ValueError("Input data should be a list or a dictionary.")
+        # Check if data is a list
+        if not isinstance(data, list):
+            raise ValueError("Input data should be a list of ingredients.")
 
+        # Transform the input data to the format expected by the classifier
+        input_vector = vectorizer.transform([" ".join(data)])
+        
         # Make the prediction
-        prediction = model.predict([data])
+        prediction = classifier.predict(input_vector)
+        
+        # Inverse transform the prediction to get the original labels
+        predicted_labels = mlb.inverse_transform(prediction)
         
         # Return the prediction result
-        return jsonify({'prediction': prediction.tolist()}), 200
+        return jsonify({'prediction': list(predicted_labels)}), 200
     except Exception as e:
         # In case of an error, return the error message
         return jsonify({'error': str(e)}), 400
