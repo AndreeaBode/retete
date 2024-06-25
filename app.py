@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 import joblib
 from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import os
 
 app = Flask(__name__)
-CORS(app, support_credentials=True)
 
 # Load the model
 model_path = 'mlb.pkl'
@@ -20,6 +20,7 @@ def home():
 
 # Define a route for predictions
 @app.route('/predict', methods=['POST'])
+@cross_origin(origin='*')
 def predict():
     try:
         # Assume data is sent as JSON
