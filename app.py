@@ -4,7 +4,7 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/predict": {"origins": "https://licenta-and-3c665baef0ba.herokuapp.com"}})
 
 # Load the model
 model_path = 'mlb.pkl'
